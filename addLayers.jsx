@@ -3,12 +3,12 @@
     var myActiveItem;
     var selectedLayer;
     var oneNodeCamName = "1nodeCam";
-    var twoNodeCamName = "2modeCam";
+    var twoNodeCamName = "2nodeCam";
     var solidColor = [0, 0, 0];
     var solidName = "solid";
     var lightName = "light"
     var adjustmentName = "Adjustment"
-    var buttonSize = [0, 0, 40, 20];
+    var buttonSize = [0, 0, 36, 17];
 
     //現在アクティブなプロジェクトとレイヤーを取得
     function getStates() {
@@ -109,28 +109,30 @@
         //上のボタン作成
         var buttonGroupAbove = myWindow.palette.add("group");
         buttonGroupAbove.alignment = "left";
+
         buttonGroupAbove.add('statictext {text: "2D", characters: 3, justify: "left"}', [0, 0, 20, 20]);
         var text2D = buttonGroupAbove.add("button", buttonSize, "Text");
         var solid2D = buttonGroupAbove.add("button", buttonSize, "Solid");
-        var adj2D = buttonGroupAbove.add("button", buttonSize, "Adj");
+        var adj2D = buttonGroupAbove.add("button", buttonSize, "Adju");
         var null2D = buttonGroupAbove.add("button", buttonSize, "Null");
         var shape2D = buttonGroupAbove.add("button", buttonSize, "Shape");
         var oneCam = buttonGroupAbove.add("button", buttonSize, "1Cam");
         var twoCam = buttonGroupAbove.add("button", buttonSize, "2Cam");
         var light = buttonGroupAbove.add("button", buttonSize, "Light");
+        buttonGroupAbove.margins = [0, 0, 0, -10];
 
         //下のボタン作成
         var buttonGroupUnder = myWindow.palette.add("group");
         buttonGroupUnder.alignment = "left";
+
         buttonGroupUnder.add('statictext {text: "3D", characters: 3, justify: "left"}', [0, 0, 20, 20]);
         var text3D = buttonGroupUnder.add("button", buttonSize, "Text");
         var solid3D = buttonGroupUnder.add("button", buttonSize, "Solid");
-        var adj3D = buttonGroupUnder.add("button", buttonSize, "Adj");
+        var adj3D = buttonGroupUnder.add("button", buttonSize, "Adju");
         var null3D = buttonGroupUnder.add("button", buttonSize, "Null");
         var shape3D = buttonGroupUnder.add("button", buttonSize, "Shape");
 
-
-        myWindow.palette.margins = [-80, -80, 0, 0];
+        myWindow.palette.margins = [5, 5, 5, 5];
 
         text2D.onClick = function () {
             addText(false);
