@@ -28,6 +28,7 @@
 
         //カメラPosition設定
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
+        
         //1ノードカメラに設定
         newCam.pointOfInterest.expression = "transform.position"
 
@@ -39,6 +40,7 @@
         var newCam = myActiveItem.layers.addCamera(twoNodeCamName, [0, 0]);
         newCam = setFromSelectedLayer(newCam);
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
+        newCam.pointOfInterest.setValue([myActiveItem.width / 2, myActiveItem.height / 2, 0]);
 
     }
 
