@@ -1,14 +1,12 @@
-(function (parent) {
+(function(parent) {
 
     var myActiveItem;
     var selectedLayer;
-    var oneNodeCamName = "1nodeCam";
-    var twoNodeCamName = "2nodeCam";
     var solidColor = [0, 0, 0];
-    var solidName = "solid";
-    var lightName = "light"
-    var adjustmentName = "Adjustment"
     var buttonSize = [0, 0, 36, 17];
+    var myWindow = {
+        palette: null, //初期パネル
+    };
 
     //現在アクティブなプロジェクトとレイヤーを取得
     function getStates() {
@@ -18,17 +16,10 @@
     //1ノードカメラ作成
     function addOneNodeCam() {
         getStates();
-        //カメラ作成
-        var newCam = myActiveItem.layers.addCamera(oneNodeCamName, [0, 0]);
-        //デュレーション指定
-        if (selectedLayer[0] !== undefined) {
-
-        }
+        var newCam = myActiveItem.layers.addCamera("1nodeCam", [0, 0]);
         newCam = setFromSelectedLayer(newCam);
-
         //カメラPosition設定
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
-        
         //1ノードカメラに設定
         newCam.pointOfInterest.expression = "transform.position"
 
@@ -37,8 +28,9 @@
     //2ノードカメラ作成
     function addTwoNodeCam() {
         getStates();
-        var newCam = myActiveItem.layers.addCamera(twoNodeCamName, [0, 0]);
+        var newCam = myActiveItem.layers.addCamera("2nodeCam", [0, 0]);
         newCam = setFromSelectedLayer(newCam);
+        //カメラPosition設定
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
         newCam.pointOfInterest.setValue([myActiveItem.width / 2, myActiveItem.height / 2, 0]);
 
@@ -47,7 +39,7 @@
     //平面作成
     function addSolid(threeD) {
         getStates();
-        var newSolid = myActiveItem.layers.addSolid(solidColor, solidName, myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+        var newSolid = myActiveItem.layers.addSolid(solidColor, "solid", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
         //newSolid.blendingMode =  BlendingMode.SCREEN;
         newSolid = setFromSelectedLayer(newSolid, threeD);
     }
@@ -66,7 +58,7 @@
     // ライト作成
     function addLight(threeD) {
         getStates();
-        var newLight = myActiveItem.layers.addLight(lightName, [myActiveItem.width / 2, myActiveItem.height / 2]);
+        var newLight = myActiveItem.layers.addLight("light", [myActiveItem.width / 2, myActiveItem.height / 2]);
         newLight = setFromSelectedLayer(newLight, threeD);
     }
     // シェイプ作成
@@ -78,10 +70,51 @@
     // 調整レイヤー作成
     function addAdjustment(threeD) {
         getStates();
-        var newAdjustment = myActiveItem.layers.addSolid(solidColor, adjustmentName, myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+        var newAdjustment = myActiveItem.layers.addSolid(solidColor, "Adjustment", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
         newAdjustment = setFromSelectedLayer(newAdjustment, threeD);
         newAdjustment.adjustmentLayer = true;
+    }
 
+    //OpticalFlaresを適用した平面作成
+    function addOpticalFlares(threeD) {
+        getStates();
+        var newSolid = myActiveItem.layers.addSolid(solidColor, "OpticalFlares", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+        newSolid.blendingMode = BlendingMode.SCREEN;
+        try {
+            var OpticalFlares = newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT OpticalFlares");
+        } catch (e) {
+            alert("OpticalFlaresが導入されていません。Andrewに貢ぎましょう")
+            newSolid.remove();
+        }
+        newSolid = setFromSelectedLayer(newSolid, threeD);
+
+    }
+    //Element3Dを適用した平面作成
+    function addElement3D(threeD) {
+        getStates();
+        var newSolid = myActiveItem.layers.addSolid(solidColor, "E3D", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+        try {
+
+            newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT 3DArray");
+        } catch (e) {
+          alert("Element3Dが導入されていません。Andrewに貢ぎましょう")
+          newSolid.remove();
+        }
+
+        newSolid = setFromSelectedLayer(newSolid, threeD);
+    }
+    //Particularを適用した平面作成
+    function addParticular(threeD) {
+        getStates();
+        var newSolid = myActiveItem.layers.addSolid(solidColor, "Particular", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+        try {
+            newSolid.property("ADBE Effect Parade").addProperty("tc Particular");
+        } catch (e) {
+            alert("Particularが導入されていません。Red Giantに貢ぎましょう")
+            newSolid.remove();
+        }
+
+        newSolid = setFromSelectedLayer(newSolid, threeD);
     }
 
     //レイヤーを選択している場合、その上にデュレーションに合わせ作成
@@ -97,9 +130,7 @@
         }
         return item;
     }
-    var myWindow = {
-        palette: null, //初期パネル
-    };
+
 
     //UI作成
     function buildUI(thisObj) {
@@ -112,7 +143,7 @@
         var buttonGroupAbove = myWindow.palette.add("group");
         buttonGroupAbove.alignment = "left";
 
-        buttonGroupAbove.add('statictext {text: "2D", characters: 3, justify: "left"}', [0, 0, 20, 20]);
+        buttonGroupAbove.add('statictext {text: "2D", characters: 3, justify: "center"}', [0, 0, 37, 20]);
         var text2D = buttonGroupAbove.add("button", buttonSize, "Text");
         var solid2D = buttonGroupAbove.add("button", buttonSize, "Solid");
         var adj2D = buttonGroupAbove.add("button", buttonSize, "Adju");
@@ -127,59 +158,74 @@
         var buttonGroupUnder = myWindow.palette.add("group");
         buttonGroupUnder.alignment = "left";
 
-        buttonGroupUnder.add('statictext {text: "3D", characters: 3, justify: "left"}', [0, 0, 20, 20]);
+        buttonGroupUnder.add('statictext {text: "3D/etc", characters: 7, justify: "center"}', [0, 0, 37, 20]);
         var text3D = buttonGroupUnder.add("button", buttonSize, "Text");
         var solid3D = buttonGroupUnder.add("button", buttonSize, "Solid");
         var adj3D = buttonGroupUnder.add("button", buttonSize, "Adju");
         var null3D = buttonGroupUnder.add("button", buttonSize, "Null");
         var shape3D = buttonGroupUnder.add("button", buttonSize, "Shape");
+        var opti = buttonGroupUnder.add("button", buttonSize, "OF");
+        var element = buttonGroupUnder.add("button", buttonSize, "E3D");
+        var particular = buttonGroupUnder.add("button", buttonSize, "Parti");
+
 
         myWindow.palette.margins = [5, 5, 5, 5];
 
-        text2D.onClick = function () {
+        //ボタン実装
+        text2D.onClick = function() {
             addText(false);
         }
-        text3D.onClick = function () {
+        text3D.onClick = function() {
             addText(true);
         }
 
-        solid2D.onClick = function () {
+        solid2D.onClick = function() {
             addSolid(false);
         }
-        solid3D.onClick = function () {
+        solid3D.onClick = function() {
             addSolid(true);
         }
 
-        oneCam.onClick = function () {
+        oneCam.onClick = function() {
             addOneNodeCam(true);
         }
-        twoCam.onClick = function () {
+        twoCam.onClick = function() {
             addTwoNodeCam(true);
         }
 
-        light.onClick = function () {
+        light.onClick = function() {
             addLight(true);
         }
 
-        adj2D.onClick = function () {
+        adj2D.onClick = function() {
             addAdjustment(false);
         }
-        adj3D.onClick = function () {
+        adj3D.onClick = function() {
             addAdjustment(true);
         }
 
-        null2D.onClick = function () {
+        null2D.onClick = function() {
             addNull(false);
         }
-        null3D.onClick = function () {
+        null3D.onClick = function() {
             addNull(true);
         }
 
-        shape2D.onClick = function () {
+        shape2D.onClick = function() {
             addShape(false);
         }
-        shape3D.onClick = function () {
+        shape3D.onClick = function() {
             addShape(true);
+        }
+
+        opti.onClick = function() {
+            addOpticalFlares(false);
+        }
+        element.onClick = function() {
+            addElement3D(false);
+        }
+        particular.onClick = function() {
+            addParticular(false);
         }
         return myWindow.palette;
     }
@@ -193,4 +239,5 @@
         //パネル
         myWindow.palette.layout.layout(true);
     }
+
 })(this);
