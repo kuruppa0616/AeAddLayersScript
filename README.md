@@ -10,3 +10,4 @@ AEでボタンを押すとレイヤーが生成されるスクリプトです。
 
 cc2015.3とcc2017で動くはずです。他のバージョンは試してませんが多分動くと思います。  
 バグとかあると思うので自己責任で適当に使ってください。  
+UIの実装部分は[SceneSplitter](https://github.com/rlldi/aescripts/tree/master/released/SceneSplitter)を参考にさせてもらっています。
