@@ -14,26 +14,24 @@
         selectedLayer = app.project.activeItem.selectedLayers;
     }
     //1ノードカメラ作成
-    function addOneNodeCam() {
+    function addOneNodeCam(threeD) {
         getStates();
         var newCam = myActiveItem.layers.addCamera("1nodeCam", [0, 0]);
-        newCam = setFromSelectedLayer(newCam);
+        newCam = setFromSelectedLayer(newCam, threeD);
         //カメラPosition設定
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
         //1ノードカメラに設定
         newCam.pointOfInterest.expression = "transform.position"
-
     }
 
     //2ノードカメラ作成
-    function addTwoNodeCam() {
+    function addTwoNodeCam(threeD) {
         getStates();
         var newCam = myActiveItem.layers.addCamera("2nodeCam", [0, 0]);
-        newCam = setFromSelectedLayer(newCam);
+        newCam = setFromSelectedLayer(newCam, threeD);
         //カメラPosition設定
         newCam.position.setValue([myActiveItem.width / 2, myActiveItem.height / 2, -1777.7778]);
         newCam.pointOfInterest.setValue([myActiveItem.width / 2, myActiveItem.height / 2, 0]);
-
     }
 
     //平面作成
@@ -80,8 +78,10 @@
         getStates();
         var newSolid = myActiveItem.layers.addSolid(solidColor, "OpticalFlares", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
         newSolid.blendingMode = BlendingMode.SCREEN;
+
+        //プラグインが導入されていない、エラー画面を表示して生成した平面を削除する
         try {
-            var OpticalFlares = newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT OpticalFlares");
+            newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT OpticalFlares");
         } catch (e) {
             alert("OpticalFlaresが導入されていません。Andrewに貢ぎましょう")
             newSolid.remove();
@@ -93,12 +93,13 @@
     function addElement3D(threeD) {
         getStates();
         var newSolid = myActiveItem.layers.addSolid(solidColor, "E3D", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
-        try {
 
-            newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT 3DArray");
+        //プラグインが導入されていない、エラー画面を表示して生成した平面を削除する
+        try {
+          newSolid.property("ADBE Effect Parade").addProperty("VIDEOCOPILOT 3DArray");
         } catch (e) {
-          alert("Element3Dが導入されていません。Andrewに貢ぎましょう")
-          newSolid.remove();
+            alert("Element3Dが導入されていません。Andrewに貢ぎましょう")
+            newSolid.remove();
         }
 
         newSolid = setFromSelectedLayer(newSolid, threeD);
@@ -107,6 +108,8 @@
     function addParticular(threeD) {
         getStates();
         var newSolid = myActiveItem.layers.addSolid(solidColor, "Particular", myActiveItem.width, myActiveItem.height, myActiveItem.pixelAspect);
+
+        //プラグインが導入されていない、エラー画面を表示して生成した平面を削除する
         try {
             newSolid.property("ADBE Effect Parade").addProperty("tc Particular");
         } catch (e) {
@@ -172,6 +175,7 @@
         myWindow.palette.margins = [5, 5, 5, 5];
 
         //ボタン実装
+        //引数 true:3Dレイヤ,false:2Dレイヤー
         text2D.onClick = function() {
             addText(false);
         }
@@ -187,14 +191,14 @@
         }
 
         oneCam.onClick = function() {
-            addOneNodeCam(true);
+            addOneNodeCam(false);
         }
         twoCam.onClick = function() {
-            addTwoNodeCam(true);
+            addTwoNodeCam(false);
         }
 
         light.onClick = function() {
-            addLight(true);
+            addLight(false);
         }
 
         adj2D.onClick = function() {
